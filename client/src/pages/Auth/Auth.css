@@ -1,0 +1,19 @@
+#auth0-lock-container .auth0-lock-header-welcome {
+    position: relative;
+  }
+  
+  #auth0-lock-container .auth0-lock-header-welcome::after {
+
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-top: 8px;
+  }
+  .auth0-lock-widget-container{
+    width: 400px;
+  }
+  .auth0-lock-widget {
+    width: 400px !important; 
+    max-width: 100%;
+    box-sizing: border-box;
+  }
