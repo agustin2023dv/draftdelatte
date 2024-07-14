@@ -1,5 +1,3 @@
-// App.tsx
-
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react'; // Importa hooks de Auth0 para la autenticación
 import { useNavigate } from 'react-router-dom'; // Importa el hook de navegación de React Router
