@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@auth0/auth0-react": "^2.2.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,7 +11,8 @@
     "@types/react-router-dom": "^5.3.3",
     "ajv": "^8.16.0",
     "ajv-keywords": "^5.1.0",
-    "auth0-lock": "^12.5.1",
+    "axios": "^1.7.2",
+    "firebase": "^10.12.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
@@ -46,7 +46,6 @@
     ]
   },
   "devDependencies": {
-    "@types/auth0-lock": "^11.27.9",
     "@types/node": "^20.14.9",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
