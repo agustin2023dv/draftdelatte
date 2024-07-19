@@ -9,3 +9,6 @@ build/
 
 # Ignore logs
 *.log
+
+#Ignore credentials for Firebase
+serviceAccountKey.json
