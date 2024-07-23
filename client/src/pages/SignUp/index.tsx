@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { registerUser } from '../../api/userApi'; 
 import { auth, googleProvider, facebookProvider } from '../../firebase/firebaseConfig';
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { validateFirstName, validateLastName, validateEmail, validatePassword, validateConfirmPassword } from '../../validation';
 
 const Signup: React.FC = () => {
@@ -12,7 +13,7 @@ const Signup: React.FC = () => {
 
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const firstNameError = validateFirstName(firstName);
@@ -32,13 +33,12 @@ const Signup: React.FC = () => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential.user);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const newUser = await registerUser({ firstName, lastName, email, password });
+      console.log('Usuario registrado:', newUser);
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error);
+    }
   };
 
   const handleGoogleSignup = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -127,15 +127,15 @@ const Signup: React.FC = () => {
         Registrarse con Facebook
       </button>
 
-
       <div>
-      <p> ¿Ya tienes una cuenta?</p><a
+        <p>¿Ya tienes una cuenta?</p>
+        <a
           href="/login"
           className="text-blue-500 hover:underline text-center"
-        > Inicia sesión
+        >
+          Inicia sesión
         </a>
       </div>
-         
     </form>
   );
 };
