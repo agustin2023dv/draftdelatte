@@ -6,28 +6,33 @@ import bcrypt from 'bcrypt';
 //**Función para crear un nuevo usuario en MongoDB
 export const createUser = async (userData: any) => {
   try {
-    const { uid, firstName, lastName, email, phone, age, password } = userData;
+    const { firstName, lastName, email, phone, age, password } = userData;
+
+    console.log('Datos recibidos en createUser:', userData); // Log para depuración
 
     // Verifica si todas las propiedades obligatorias están presentes
-    if (!uid || !firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password) {
       throw new Error('Todos los campos obligatorios deben ser proporcionados');
     }
 
     const salt = await bcrypt.genSalt(10); // Genera un salt para encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, salt); // Encripta la contraseña usando el salt generado
-    const newUser = new User({ 
-      uid, 
-      firstName, 
-      lastName, 
-      email, 
-      phone, 
-      age, 
-      password: hashedPassword 
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      phone,
+      age,
+      password: hashedPassword
     }); // Crea un nuevo documento de usuario con los datos proporcionados, incluyendo la contraseña encriptada
+
+    console.log('Guardando nuevo usuario en la BD:', newUser); // Log para depuración
 
     return await newUser.save(); // Guarda el nuevo usuario en la base de datos y devuelve el documento guardado
   } catch (error) {
-    throw new Error('Error al crear el usuario: ' + error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('Error en createUser:', errorMessage); // Log para depuración
+    throw new Error('Error al crear el usuario: ' + errorMessage);
   }
 };
 
@@ -36,7 +41,8 @@ export const getUserByEmail = async (email: string) => {
   try {
     return await User.findOne({ email }); // Busca un usuario en la base de datos por su correo electrónico y devuelve el documento encontrado
   } catch (error) {
-    throw new Error('Error al obtener el usuario por correo electrónico: ' + error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error('Error al obtener el usuario por correo electrónico: ' + errorMessage);
   }
 };
 
@@ -52,6 +58,7 @@ export const resetPassword = async (email: string, newPassword: string) => {
     user.password = hashedPassword; // Actualiza la contraseña del usuario
     return await user.save(); // Guarda los cambios en la base de datos y devuelve el documento actualizado
   } catch (error) {
-    throw new Error('Error al restablecer la contraseña: ' + error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    throw new Error('Error al restablecer la contraseña: ' + errorMessage);
   }
 };
