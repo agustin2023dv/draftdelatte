@@ -1,5 +1,5 @@
-// validationMiddleware.ts
 import { body, validationResult } from 'express-validator';
+import { Request, Response, NextFunction } from 'express';
 
 // Caracteres especiales permitidos en el email
 const emailRegex = /^[^@]+@\w+(\.\w+)+\w$/;
@@ -13,7 +13,7 @@ export const registerValidation = [
     .withMessage('La contraseña debe incluir al menos una letra mayúscula, una minúscula, un número y un símbolo especial'),
   body('firstName').not().isEmpty().trim().escape().withMessage('El nombre es obligatorio'),
   body('lastName').not().isEmpty().trim().escape().withMessage('El apellido es obligatorio'),
-  (req, res, next) => {
+  (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -27,7 +27,7 @@ export const loginValidation = [
   body('email').isEmail().withMessage('Ingrese un correo electrónico válido')
     .matches(emailRegex).withMessage('El correo electrónico contiene caracteres inválidos'),
   body('password').not().isEmpty().withMessage('La contraseña es obligatoria'),
-  (req, res, next) => {
+  (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
