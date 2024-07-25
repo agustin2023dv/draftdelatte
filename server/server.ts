@@ -19,11 +19,9 @@ connectDB();
 // Definir una ruta de prueba
 app.get('/api/user/test', (req, res) => {
   res.json({ message: 'Ruta de prueba funcionando' });
-});
-
+})
 // Montar las rutas de usuario
 app.use('/api/user', userRoutes);
-
 // Servir el frontend estático
 app.use(express.static(path.join(__dirname, '../client/build')));
 
