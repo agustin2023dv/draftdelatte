@@ -20,15 +20,15 @@ userSchema.pre<IUser>('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
+    return next();
   } catch (error) {
-    next(error as Error);
+    return next(error as Error);
   }
 });
 
 // Método para comparar contraseñas
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return await bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function (candidatePassword: string) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Exporta el modelo de usuario
