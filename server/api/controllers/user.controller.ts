@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
 import { createUser as registerUserService, getUserByEmail, resetPassword as resetPasswordService } from "../services/user.service";
-import bcrypt from 'bcrypt';
+
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest } from '../../common/Interfaces';
+import User from '../../models/User';
+import { encryptPassword } from '../services/encrypton.service';
+import { Console } from 'console';
 
 //* CONTROLADOR PARA LOS USUARIOS
 
@@ -29,22 +32,25 @@ export const loginUserController = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await getUserByEmail(email);
     if (!user) {
+      console.log(`Usuario con email ${email} no encontrado`);
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
-    const isMatch = await bcrypt.compare(password, user.password);
+
+   
+
+    const isMatch = await user.comparePassword(password);
+    console.log(`Resultado de comparación de contraseña: ${isMatch}`);
     if (!isMatch) {
       return res.status(400).json({ message: 'Contraseña incorrecta' });
     }
+
     const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
-    res.status(200).json({ token });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error en loginUserController:', error.message);
-      res.status(500).json({ message: error.message });
-    } else {
-      console.error('Error desconocido en loginUserController:', error);
-      res.status(500).json({ message: 'Error desconocido' });
-    }
+    console.log(`Token generado: ${token}`);
+    return res.status(200).json({ token });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('Error en loginUserController:', errorMessage);
+    return res.status(500).json({ message: 'Error en el servidor', error: errorMessage });
   }
 };
 
