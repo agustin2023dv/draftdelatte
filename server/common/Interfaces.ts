@@ -15,6 +15,7 @@ export interface IUser extends Document {
   password: string;            // Contraseña del usuario, encriptada
   resetPasswordToken?: string; // Token opcional para restablecer la contraseña
   resetPasswordExpires?: number; // Timestamp opcional de expiración del token de restablecimiento de contraseña
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 // Extensión de la interfaz Request de Express para incluir la propiedad opcional user
