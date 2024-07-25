@@ -1,5 +1,6 @@
 import User from '../../models/User';
 import bcrypt from 'bcrypt';
+import { encryptPassword } from './encrypton.service';
 
 //* LOGICA RELACIONADA CON LA BD . Servicio para la lógica de usuarios.
 
@@ -15,16 +16,14 @@ export const createUser = async (userData: any) => {
       throw new Error('Todos los campos obligatorios deben ser proporcionados');
     }
 
-    const salt = await bcrypt.genSalt(10); // Genera un salt para encriptar la contraseña
-    const hashedPassword = await bcrypt.hash(password, salt); // Encripta la contraseña usando el salt generado
     const newUser = new User({
       firstName,
       lastName,
       email,
       phone,
       age,
-      password: hashedPassword
-    }); // Crea un nuevo documento de usuario con los datos proporcionados, incluyendo la contraseña encriptada
+      password 
+    });
 
     console.log('Guardando nuevo usuario en la BD:', newUser); // Log para depuración
 
@@ -35,7 +34,6 @@ export const createUser = async (userData: any) => {
     throw new Error('Error al crear el usuario: ' + errorMessage);
   }
 };
-
 //**Función para obtener un usuario por su correo electrónico en MongoDB
 export const getUserByEmail = async (email: string) => {
   try {
