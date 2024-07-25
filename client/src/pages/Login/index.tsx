@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { auth, googleProvider, facebookProvider } from '../../firebase/firebaseConfig';
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { validateEmail } from '../../validation'; 
+import { validateEmail } from '../../validation';
+import { loginUser } from '../../api/userApi'; 
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ const Login: React.FC = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const emailValidationError = validateEmail(email);
@@ -22,48 +23,48 @@ const Login: React.FC = () => {
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(userCredential.user);
-        navigate('/'); // Redirige al usuario después de iniciar sesión
-      })
-      .catch((error) => {
-        console.error(error);
-        setError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
-      });
+    try {
+      const userData = { email, password };
+      const response = await loginUser(userData); 
+      console.log(response.user); // Manejar la respuesta del servidor
+
+      // Guarda el token en el almacenamiento local (opcional)
+      localStorage.setItem('token', response.token);
+
+      navigate('/'); // Redirige al usuario después de iniciar sesión
+    } catch (error) {
+      console.error(error);
+      setError('Error al iniciar sesión. Por favor, verifica tus credenciales.');
+    }
   };
 
-  const handleGoogleLogin = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleGoogleLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        console.log(result.user);
-        navigate('/'); // Redirige al usuario después de iniciar sesión
-      })
-      .catch((error) => {
-        console.error(error);
-        setError('Error al iniciar sesión con Google.');
-      });
+    try {
+      const result = await signInWithPopup(auth, googleProvider); // Usando Firebase para Google
+      console.log(result.user);
+      navigate('/'); // Redirige al usuario después de iniciar sesión
+    } catch (error) {
+      console.error(error);
+      setError('Error al iniciar sesión con Google.');
+    }
   };
 
-  const handleFacebookLogin = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleFacebookLogin = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    signInWithPopup(auth, facebookProvider)
-      .then((result) => {
-        console.log(result.user);
-        navigate('/'); // Redirige al usuario después de iniciar sesión
-      })
-      .catch((error) => {
-        console.error(error);
-        setError('Error al iniciar sesión con Facebook.');
-      });
+    try {
+      const result = await signInWithPopup(auth, facebookProvider); // Usando Firebase para Facebook
+      console.log(result.user);
+      navigate('/'); // Redirige al usuario después de iniciar sesión
+    } catch (error) {
+      console.error(error);
+      setError('Error al iniciar sesión con Facebook.');
+    }
   };
 
   const redirectToPasswordReset = () => {
     navigate('/forgot-password');
   };
-
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -117,17 +118,11 @@ const Login: React.FC = () => {
             ¿Olvidó su contraseña?
           </button>
         </div>
-
-      <div className="pt-4 mb-0">
-       
-         <p>
-         ¿Todavía no tiene una cuenta?
-          </p>   <a href="/sign-up" className="text-blue-500 hover:underline text-center"
-          >¡Regístrate ahora!
-        </a>
-      </div>
+        <div className="pt-4 mb-0">
+          <p>¿Todavía no tiene una cuenta?</p>
+          <a href="/sign-up" className="text-blue-500 hover:underline text-center">¡Regístrate ahora!</a>
+        </div>
       </form>
-      
     </div>
   );
 };
